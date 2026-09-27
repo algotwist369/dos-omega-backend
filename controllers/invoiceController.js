@@ -6,7 +6,7 @@ const s3Service = require('../services/s3.service');
 const { logInvoiceActivity } = require('../services/invoiceAudit.service');
 const { resolveFolderByIdOrPath, getAllDescendantFolderIds } = require('../utils/invoiceFolderHelper');
 
-// 1. Batch Pre-signed URLs for up to 200 files (Super fast, <15ms)
+// 1. Batch Pre-signed URLs for up to 2000 files (Super fast, <15ms)
 const batchPresignUpload = async (req, res) => {
     try {
         const { folderId, files } = req.body;
@@ -19,8 +19,9 @@ const batchPresignUpload = async (req, res) => {
             return res.status(400).json({ error: 'Files array is required' });
         }
 
-        if (files.length > 200) {
-            return res.status(400).json({ error: 'Maximum 200 files can be uploaded at once' });
+        const maxFilesLimit = parseInt(process.env.MAXIMUM_INVOICE_FILES, 10) || 2000;
+        if (files.length > maxFilesLimit) {
+            return res.status(400).json({ error: `Maximum ${maxFilesLimit} files can be uploaded at once` });
         }
 
         const presignedFiles = await s3Service.getBatchPresignedUploadUrls({

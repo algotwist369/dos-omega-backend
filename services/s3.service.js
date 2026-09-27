@@ -93,7 +93,7 @@ const getPresignedUploadUrl = async ({ folderId, fileName, mimeType }) => {
 };
 
 /**
- * Ultra-fast Batch Presigned URLs generator for up to 200 files (<15ms)
+ * Ultra-fast Batch Presigned URLs generator for up to 2000 files (<15ms)
  */
 const getBatchPresignedUploadUrls = async ({ folderId, files }) => {
     const client = getS3Client();
