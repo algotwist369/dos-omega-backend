@@ -145,11 +145,16 @@ exports.getTeamsTree = async (req, res) => {
             for (const sub of children) {
                 if (sub.leader_id) uniqueUserIds.add(sub.leader_id._id.toString());
                 (sub.members || []).forEach((m) => {
-                    if (m.user_id) uniqueUserIds.add(m.user_id._id.toString());
-                    // Effective businesses: check m.assigned_businesses, fallback to user_id.assigned_businesses
-                    const effectiveBiz = (m.assigned_businesses && m.assigned_businesses.length > 0)
-                        ? m.assigned_businesses
-                        : (m.user_id?.assigned_businesses || []);
+                    if (m.user_id) {
+                        uniqueUserIds.add(m.user_id._id.toString());
+                        // If member has no direct sub-team overrides, inherit from User's pre-assigned locations
+                        if (!m.assigned_businesses || m.assigned_businesses.length === 0) {
+                            if (m.user_id.assigned_businesses && m.user_id.assigned_businesses.length > 0) {
+                                m.assigned_businesses = m.user_id.assigned_businesses;
+                            }
+                        }
+                    }
+                    const effectiveBiz = m.assigned_businesses || [];
                     effectiveBiz.forEach((b) => uniqueBizIds.add((b._id || b).toString()));
                 });
                 (sub.business_ids || []).forEach((b) => uniqueBizIds.add(b._id.toString()));
