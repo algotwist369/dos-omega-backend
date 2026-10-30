@@ -131,6 +131,7 @@ if (cluster.isPrimary && useCluster) {
     app.use('/api/support', require('./routes/supportRoute'));
     app.use('/api/chat', require('./routes/chatRoute'));
     app.use('/api/tasks', require('./routes/taskRoute'));
+    app.use('/api/teams', require('./routes/teamRoute'));
     app.use('/api/invoice-permissions', require('./routes/invoicePermissionRoute'));
     app.use('/api/invoice-folders', require('./routes/invoiceFolderRoute'));
     app.use('/api/invoices', require('./routes/invoiceRoute'));
